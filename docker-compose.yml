@@ -2,7 +2,6 @@ services:
   paperless-ai:
     image: clusterzx/paperless-ai
     container_name: paperless-ai
-    network_mode: bridge
     restart: unless-stopped
     cap_drop:
       - ALL
@@ -12,10 +11,20 @@ services:
       - PUID=1000
       - PGID=1000
       - PAPERLESS_AI_PORT=${PAPERLESS_AI_PORT:-3000}
+      - PAPERLESS_API_URL=http://delta-dms:8000/api
+      - PAPERLESS_API_TOKEN=2a565750b033fc0ccd0c19b54303ca31e37ae254
     ports:
       - "3000:${PAPERLESS_AI_PORT:-3000}"
     volumes:
       - paperless-ai_data:/app/data
+    networks:
+      - delta-internal
 
 volumes:
   paperless-ai_data:
+
+networks:
+  delta-internal:
+    external: true
+    name: delta-internal
+
