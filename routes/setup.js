@@ -210,7 +210,7 @@ const protectApiRoute = (req, res, next) => {
  *   get:
  *     summary: Render login page or redirect to setup if no users exist
  *     description: |
- *       Serves the login page for user authentication to the Paperless-AI application.
+ *       Serves the login page for user authentication to the Delta-AI application.
  *       If no users exist in the database, the endpoint automatically redirects to the setup page
  *       to complete the initial application configuration.
  *       
@@ -999,7 +999,7 @@ router.get('/chat/init/:documentId', async (req, res) => {
  *     summary: Document history page
  *     description: |
  *       Renders the document history page with filtering options.
- *       This page displays a list of all documents that have been processed by Paperless-AI,
+ *       This page displays a list of all documents that have been processed by Delta-AI,
  *       showing the changes made to the documents through AI processing.
  *       
  *       The page includes filtering capabilities by correspondent, tag, and free text search,
@@ -1062,7 +1062,7 @@ router.get('/history', async (req, res) => {
  *   get:
  *     summary: Get processed document history
  *     description: |
- *       Returns a paginated list of documents that have been processed by Paperless-AI.
+ *       Returns a paginated list of documents that have been processed by Delta-AI.
  *       Supports filtering by tag, correspondent, and search term.
  *       Designed for integration with DataTables jQuery plugin.
  *       
@@ -1286,7 +1286,7 @@ router.get('/api/history', async (req, res) => {
  *     summary: Reset all processed documents
  *     description: |
  *       Deletes all processing records from the database, allowing documents to be processed again.
- *       This doesn't delete the actual documents from Paperless-ngx, only their processing status in Paperless-AI.
+ *       This doesn't delete the actual documents from Paperless-ngx, only their processing status in Delta-AI.
  *       
  *       This operation can be useful when changing AI models or prompts, as it allows reprocessing
  *       all documents with the updated configuration.
@@ -1346,7 +1346,7 @@ router.post('/api/reset-all-documents', async (req, res) => {
  *     summary: Reset specific documents
  *     description: |
  *       Deletes processing records for specific documents, allowing them to be processed again.
- *       This doesn't delete the actual documents from Paperless-ngx, only their processing status in Paperless-AI.
+ *       This doesn't delete the actual documents from Paperless-ngx, only their processing status in Delta-AI.
  *       
  *       This operation is useful when you want to reprocess only selected documents after changes to
  *       the AI model, prompt, or document metadata configuration.
@@ -2358,7 +2358,7 @@ async function processQueue(customPrompt) {
  *     summary: Webhook for document updates
  *     description: |
  *       Processes incoming webhook notifications from Paperless-ngx about document
- *       changes, additions, or deletions. The webhook allows Paperless-AI to respond
+ *       changes, additions, or deletions. The webhook allows Delta-AI to respond
  *       to document changes in real-time.
  *       
  *       When a new document is added or updated in Paperless-ngx, this endpoint can
@@ -3344,7 +3344,7 @@ router.get('/health', async (req, res) => {
  *   post:
  *     summary: Submit initial application setup configuration
  *     description: |
- *       Configures the initial setup of the Paperless-AI application, including connections
+ *       Configures the initial setup of the Delta-AI application, including connections
  *       to Paperless-ngx, AI provider settings, processing parameters, and user authentication.
  *       
  *       This endpoint is primarily used during the first-time setup of the application and
@@ -3444,11 +3444,11 @@ router.get('/health', async (req, res) => {
  *                 example: "Invoice,Receipt"
  *               username:
  *                 type: string
- *                 description: Admin username for Paperless-AI
+ *                 description: Admin username for Delta-AI
  *                 example: "admin"
  *               password:
  *                 type: string
- *                 description: Admin password for Paperless-AI
+ *                 description: Admin password for Delta-AI
  *                 example: "securepassword"
  *               useExistingData:
  *                 type: boolean
@@ -3748,7 +3748,7 @@ router.post('/setup', express.json(), async (req, res) => {
  *   post:
  *     summary: Update application settings
  *     description: |
- *       Updates the configuration settings of the Paperless-AI application after initial setup.
+ *       Updates the configuration settings of the Delta-AI application after initial setup.
  *       This endpoint allows administrators to modify connections to Paperless-ngx, 
  *       AI provider settings, processing parameters, and feature toggles.
  *       
