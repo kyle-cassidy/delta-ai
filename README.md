@@ -43,6 +43,22 @@ It features: Automode, Manual Mode, Ollama and OpenAI, a Chat function to query 
 
 Visit the Wiki for installation:\
 [Click here for Installation](https://github.com/clusterzx/paperless-ai/wiki/2.-Installation)
+
+### Paperless-ngx API Permissions
+
+Delta-AI requires specific permissions in Paperless-ngx to function correctly. The user associated with your API token must have the following permissions:
+
+- **View** access to Documents
+- **View** access to Document Types
+- **View** access to Correspondents
+- **View** access to Tags
+- **View** access to Custom Fields
+- **View** access to Users
+
+If you encounter 403 Forbidden errors, check the permissions for your API user in the Paperless-ngx admin panel.
+
+For more details, see [Paperless Permissions](docs/PAPERLESS_PERMISSIONS.md).
+
 -------------------------------------------
 
 
