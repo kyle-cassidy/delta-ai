@@ -1,16 +1,16 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Paperless-AI API Documentation",
+    "title": "Delta-AI API Documentation",
     "version": "1.0.0",
-    "description": "API documentation for the Paperless-AI application",
+    "description": "API documentation for the Delta-AI application",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
     },
     "contact": {
-      "name": "Clusterzx",
-      "url": "https://github.com/Clusterzx"
+      "name": "Delta Analytical Corp",
+      "url": "https://github.com/Delta-Analytical-Corp"
     }
   },
   "servers": [
