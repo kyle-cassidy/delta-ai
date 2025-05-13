@@ -4,9 +4,9 @@ This document provides specific instructions for Claude when assisting with the 
 
 ## Repository Documentation
 
-- **Maintain REPO_MAP.md**: Whenever code changes are made, update the REPO_MAP.md file to reflect those changes
-- **Commit documentation updates**: Use the message "docs: update REPO_MAP.md with latest changes"
-- **Feature completion check**: When completing features, always verify if REPO_MAP.md needs updating
+- **Maintain REPO_MAP.md**: Whenever code changes are made, update planning/REPO_MAP.md to reflect those changes
+- **Commit documentation updates**: Use the message "docs: update repository documentation"
+- **Feature completion check**: When completing features, always verify if repository documentation needs updating
 - **Immediate documentation**: When any new services, routes, or major components are added, document them immediately
 - **Keep documentation aligned**: Ensure that documentation reflects actual code organization and behavior
 
