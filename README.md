@@ -1,8 +1,8 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/clusterzx/paperless-ai) ![Docker Pulls](https://img.shields.io/docker/pulls/clusterzx/paperless-ai) ![GitHub User's stars](https://img.shields.io/github/stars/clusterzx) ![GitHub License](https://img.shields.io/github/license/clusterzx/paperless-ai?cacheSeconds=1)
 
-# Paperless-AI
+# Delta-AI
 
-An automated document analyzer for Paperless-ngx using OpenAI API, Ollama and all OpenAI API compatible Services to automatically analyze and tag your documents. \
+An automated document analyzer for Delta-DMS (Paperless-ngx fork) using OpenAI API, Ollama and all OpenAI API compatible Services to automatically analyze and tag your documents. \
 It features: Automode, Manual Mode, Ollama and OpenAI, a Chat function to query your documents with AI, a modern and intuitive Webinterface. \
 \
 **Following Services and OpenAI API compatible services have been successfully tested:**
@@ -84,7 +84,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx) for the amazing document management system
+- [Delta-DMS](Paperless-ngx fork) for the amazing document management system
 - OpenAI API
 - The Express.js and Node.js communities for their excellent tools
 

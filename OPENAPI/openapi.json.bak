@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.0",
   "info": {
-    "title": "Paperless-AI API Documentation",
+    "title": "Delta-AI API Documentation",
     "version": "1.0.0",
-    "description": "API documentation for the Paperless-AI application",
+    "description": "API documentation for the Delta-AI application",
     "license": {
       "name": "MIT",
       "url": "https://opensource.org/licenses/MIT"
@@ -492,7 +492,7 @@
     "/api-docs/openapi.json": {
       "get": {
         "summary": "Retrieve the OpenAPI specification",
-        "description": "Returns the complete OpenAPI specification for the Delta-AI API.\nThis endpoint attempts to serve a static OpenAPI JSON file first, falling back\nto dynamically generating the specification if the file cannot be read.\n\nThe OpenAPI specification document contains all API endpoints, parameters,\nrequest bodies, responses, and schemas for the entire application.\n",
+        "description": "Returns the complete OpenAPI specification for the Paperless-AI API.\nThis endpoint attempts to serve a static OpenAPI JSON file first, falling back\nto dynamically generating the specification if the file cannot be read.\n\nThe OpenAPI specification document contains all API endpoints, parameters,\nrequest bodies, responses, and schemas for the entire application.\n",
         "tags": [
           "API",
           "System"
