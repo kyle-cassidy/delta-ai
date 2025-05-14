@@ -1,17 +1,19 @@
 {
-  "name": "paperless-ai",
+  "name": "delta-ai",
   "version": "1.0.0",
-  "description": "AI based Tag, correspondent and meta data generation",
+  "description": "Delta AI document classification and metadata generation",
   "main": "server.js",
   "scripts": {
-    "test": "nodemon server.js"
+    "test": "nodemon server.js",
+    "dev": "nodemon --watch config --watch services --watch routes --watch models --watch .env server.js"
   },
   "keywords": [
-    "paperless-ngx",
+    "delta-dms",
     "ai",
     "paperless",
     "artificial",
-    "intelligence"
+    "intelligence",
+    "delta"
   ],
   "nodemonConfig": {
     "ignore": [

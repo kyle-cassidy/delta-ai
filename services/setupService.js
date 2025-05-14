@@ -30,8 +30,9 @@ class SetupService {
 
   async validatePaperlessConfig(url, token) {
     try {
-      console.log('Validating Paperless config for:', url + '/api/documents/');
-      const response = await axios.get(`${url}/api/documents/`, {
+      const apiUrl = url.endsWith('/api') ? url : `${url}/api`;
+      console.log('Validating Paperless config for:', `${apiUrl}/documents/`);
+      const response = await axios.get(`${apiUrl}/documents/`, {
         headers: {
           'Authorization': `Token ${token}`
         }
@@ -153,7 +154,7 @@ class SetupService {
 
   async validateConfig(config) {
     // Validate Paperless config
-    const paperlessApiUrl = config.PAPERLESS_API_URL.replace(/\/api/g, '');
+    const paperlessApiUrl = config.PAPERLESS_API_URL;
     const paperlessValid = await this.validatePaperlessConfig(
       paperlessApiUrl,
       config.PAPERLESS_API_TOKEN

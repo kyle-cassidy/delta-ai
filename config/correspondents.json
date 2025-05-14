@@ -1,0 +1,136 @@
+{
+  "correspondents": [
+    {
+      "id": "internal",
+      "name": "Internal",
+      "description": "Documents created within Delta Corporation",
+      "email_domains": ["delta-corp.com", "delta.internal"],
+      "identifiers": ["Delta Corp", "Delta Corporation", "Delta Internal"]
+    },
+    {
+      "id": "vendors",
+      "name": "Vendors",
+      "description": "External suppliers and service providers",
+      "common_vendors": [
+        {
+          "name": "Acme Supplies",
+          "identifiers": ["Acme", "Acme Supplies Inc.", "acme@supplies.com"]
+        },
+        {
+          "name": "TechSolutions",
+          "identifiers": ["Tech Solutions", "TechSolutions Ltd.", "info@techsolutions.com"]
+        },
+        {
+          "name": "Global Services",
+          "identifiers": ["Global Services", "Global", "support@globalservices.com"]
+        }
+      ]
+    },
+    {
+      "id": "clients",
+      "name": "Clients",
+      "description": "Organizations and individuals who purchase Delta's products or services",
+      "common_clients": [
+        {
+          "name": "XYZ Industries",
+          "identifiers": ["XYZ", "XYZ Industries", "XYZ Corp", "info@xyz.com"]
+        },
+        {
+          "name": "ABC Company",
+          "identifiers": ["ABC", "ABC Co.", "ABC Company", "contact@abc.com"]
+        }
+      ]
+    },
+    {
+      "id": "government",
+      "name": "Government",
+      "description": "Government agencies and regulatory bodies",
+      "agencies": [
+        {
+          "name": "IRS",
+          "identifiers": ["Internal Revenue Service", "IRS", "Department of Treasury", "irs.gov"]
+        },
+        {
+          "name": "State Department",
+          "identifiers": ["Department of State", "State Dept", "state.gov"]
+        },
+        {
+          "name": "Local Government",
+          "identifiers": ["City of", "County of", "Municipality", "Town of"]
+        }
+      ]
+    },
+    {
+      "id": "financial",
+      "name": "Financial Institutions",
+      "description": "Banks, investment firms, and financial service providers",
+      "institutions": [
+        {
+          "name": "First National Bank",
+          "identifiers": ["First National", "FNB", "First National Bank", "firstnational.com"]
+        },
+        {
+          "name": "Investment Partners",
+          "identifiers": ["Investment Partners", "IP Financial", "investpartners.com"]
+        }
+      ]
+    },
+    {
+      "id": "utilities",
+      "name": "Utilities",
+      "description": "Utility service providers",
+      "providers": [
+        {
+          "name": "Power Electric",
+          "identifiers": ["Power Electric", "PE Utilities", "power-electric.com"]
+        },
+        {
+          "name": "Water Services",
+          "identifiers": ["Water Services", "Municipal Water", "waterservices.com"]
+        },
+        {
+          "name": "Internet Provider",
+          "identifiers": ["Internet Services", "ISP", "Broadband Provider"]
+        }
+      ]
+    },
+    {
+      "id": "shipping",
+      "name": "Shipping Companies",
+      "description": "Courier and logistics service providers",
+      "companies": [
+        {
+          "name": "Express Delivery",
+          "identifiers": ["Express Delivery", "ExpressDel", "express-delivery.com"]
+        },
+        {
+          "name": "Global Logistics",
+          "identifiers": ["Global Logistics", "GL Shipping", "globallogistics.com"]
+        },
+        {
+          "name": "Fast Freight",
+          "identifiers": ["Fast Freight", "FF Ltd", "fastfreight.com"]
+        }
+      ]
+    },
+    {
+      "id": "insurance",
+      "name": "Insurance Providers",
+      "description": "Companies providing insurance services",
+      "providers": [
+        {
+          "name": "Security Insurance",
+          "identifiers": ["Security Insurance", "SecInsure", "security-insurance.com"]
+        },
+        {
+          "name": "Health Benefits",
+          "identifiers": ["Health Benefits", "HB Insurance", "healthbenefits.com"]
+        },
+        {
+          "name": "Property Protect",
+          "identifiers": ["Property Protect", "PropProtect", "propertyprotect.com"]
+        }
+      ]
+    }
+  ]
+}

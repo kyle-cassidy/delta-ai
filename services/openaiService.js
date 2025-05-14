@@ -2,6 +2,7 @@ const OpenAI = require('openai');
 const config = require('../config/config');
 const tiktoken = require('tiktoken');
 const paperlessService = require('./paperlessService');
+const configService = require('./configService');
 const fs = require('fs').promises;
 const path = require('path');
 
@@ -132,16 +133,20 @@ class OpenAIService {
         .map(line => '    ' + line)  // Add proper indentation
         .join('\n');
 
+      // Get enhanced configuration prompts
+      const enhancedPrompt = await configService.getEnhancedPrompt();
+      
       // Get system prompt and model
       if(process.env.USE_EXISTING_DATA === 'yes') {
         systemPrompt = `
         Prexisting tags: ${existingTagsList}\n\n
         Prexisiting correspondent: ${existingCorrespondentList}\n\n
+        ${enhancedPrompt}\n\n
         ` + process.env.SYSTEM_PROMPT + '\n\n' + config.mustHavePrompt.replace('%CUSTOMFIELDS%', customFieldsStr);
         promptTags = '';
       } else {
         config.mustHavePrompt = config.mustHavePrompt.replace('%CUSTOMFIELDS%', customFieldsStr);
-        systemPrompt = process.env.SYSTEM_PROMPT + '\n\n' + config.mustHavePrompt;
+        systemPrompt = process.env.SYSTEM_PROMPT + '\n\n' + enhancedPrompt + '\n\n' + config.mustHavePrompt;
         promptTags = '';
       }
 
@@ -276,9 +281,13 @@ class OpenAIService {
         throw new Error('OpenAI client not initialized - missing API key');
       }
       
-      // Calculate total prompt tokens including musthavePrompt
+      // Get enhanced configuration prompts
+      const enhancedPrompt = await configService.getEnhancedPrompt();
+      const combinedPrompt = prompt + '\n\n' + enhancedPrompt + '\n\n' + musthavePrompt;
+      
+      // Calculate total prompt tokens including musthavePrompt and enhanced prompts
       const totalPromptTokens = await this.calculateTotalPromptTokens(
-        prompt + musthavePrompt // Combined system prompt
+        combinedPrompt // Combined system prompt
       );
       
       // Calculate available tokens
@@ -295,7 +304,7 @@ class OpenAIService {
         messages: [
           {
             role: "system",
-            content: prompt + musthavePrompt
+            content: combinedPrompt
           },
           {
             role: "user",

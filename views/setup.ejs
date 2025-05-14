@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paperless-ai Setup</title>
+    <title>Delta-AI Setup</title>
     <script src="https://cdn.tailwindcss.com/3.4.16"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" href="css/setup.css">
@@ -25,9 +25,9 @@
             <div class="mx-auto max-w-7xl px-6 lg:px-8">
                 <div class="flex h-24 items-center justify-between">
                     <div class="flex items-center space-x-6">
-                        <img src="/favicon.ico" alt="Paperless AI Logo" style="height: 60px;">
+                        <img src="/Delta-Analytical-logo.png" alt="Delta AI Logo" style="height: 60px;">
                         <div>
-                            <h1 class="text-2xl font-bold">Paperless-AI <small><%= config.PAPERLESS_AI_VERSION %></small></h1>
+                            <h1 class="text-2xl font-bold">Delta-AI <small><%= config.PAPERLESS_AI_VERSION %></small></h1>
                             <p class="text-sm text-secondary">Configuration Setup</p>
                         </div>
                     </div>
@@ -879,8 +879,8 @@
     const tourSteps = [
         {
             id: 'welcome',
-            title: 'Welcome to Paperless-AI Setup',
-            text: 'This guided walkthrough will help you configure Paperless-AI, an intelligent automation add-on for Paperless-NGX. Follow the steps carefully to optimize document processing.',
+            title: 'Welcome to Delta-AI Setup',
+            text: 'This guided walkthrough will help you configure Delta-AI, an intelligent automation add-on for Paperless-NGX. Follow the steps carefully to optimize document processing.',
             buttons: [
                 {
                     text: 'Skip',
@@ -896,7 +896,7 @@
         {
             id: 'user-setup',
             title: 'User Setup',
-            text: 'Here, you need to create a user account for Paperless-AI. This user will be used to access and manage the automation processes.',
+            text: 'Here, you need to create a user account for Delta-AI. This user will be used to access and manage the automation processes.',
             attachTo: {
                 element: '#user-tab',
                 on: 'right'
@@ -928,7 +928,7 @@
         {
             id: 'api-token',
             title: 'API Token',
-            text: 'Provide a valid API Token for authentication. This ensures Paperless-AI can interact securely with Paperless-NGX.',
+            text: 'Provide a valid API Token for authentication. This ensures Delta-AI can interact securely with Paperless-NGX.',
             attachTo: {
                 element: '#paperlessToken',
                 on: 'right'
@@ -1168,7 +1168,7 @@
         {
             id: 'save-config',
             title: 'Save Configuration',
-            text: 'Click "Save Configuration" to apply all your settings and activate Paperless-AI automation.',
+            text: 'Click "Save Configuration" to apply all your settings and activate Delta-AI automation.',
             attachTo: {
                 element: '.submit-btn',
                 on: 'top'

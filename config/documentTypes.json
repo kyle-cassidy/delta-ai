@@ -1,0 +1,74 @@
+{
+  "document_types": [
+    {
+      "id": "invoice",
+      "name": "Invoice",
+      "description": "A document requesting payment for goods or services. Look for total amount, payment terms, invoice number, and itemized lists of charges.",
+      "examples": ["Receipt", "Bill", "Statement", "Payment request"],
+      "common_terms": ["Invoice", "Total", "Amount due", "Payment terms", "Tax", "Subtotal"]
+    },
+    {
+      "id": "contract",
+      "name": "Contract",
+      "description": "A formal agreement between parties. Look for signatures, terms and conditions, dates of validity, and party names.",
+      "examples": ["Agreement", "Memorandum of understanding", "Service agreement", "Employment contract"],
+      "common_terms": ["Contract", "Agreement", "Terms", "Conditions", "Effective date", "Termination", "Parties"]
+    },
+    {
+      "id": "letter",
+      "name": "Letter",
+      "description": "A written communication from one party to another. Look for greeting, signature, and letter format.",
+      "examples": ["Business letter", "Cover letter", "Recommendation letter", "Formal correspondence"],
+      "common_terms": ["Dear", "Sincerely", "Regards", "To whom it may concern"]
+    },
+    {
+      "id": "report",
+      "name": "Report",
+      "description": "A document presenting information, analysis, or findings. Look for sections, data, conclusions, and recommendations.",
+      "examples": ["Financial report", "Progress report", "Analysis report", "Status report"],
+      "common_terms": ["Report", "Findings", "Analysis", "Summary", "Recommendations", "Conclusion"]
+    },
+    {
+      "id": "form",
+      "name": "Form",
+      "description": "A document with fields for collecting information. Look for blank spaces, checkboxes, and signature lines.",
+      "examples": ["Application form", "Registration form", "Survey", "Questionnaire"],
+      "common_terms": ["Form", "Complete", "Fill", "Sign", "Return"]
+    },
+    {
+      "id": "certificate",
+      "name": "Certificate",
+      "description": "A document certifying a fact, qualification, or accomplishment. Look for official seals, signatures, and formal language.",
+      "examples": ["Diploma", "License", "Award", "Certification"],
+      "common_terms": ["Certificate", "Certify", "Award", "Achievement", "Qualification"]
+    },
+    {
+      "id": "statement",
+      "name": "Statement",
+      "description": "A document showing account activity or balance. Look for transaction history, account numbers, and balance information.",
+      "examples": ["Bank statement", "Account statement", "Credit card statement"],
+      "common_terms": ["Statement", "Balance", "Transactions", "Account", "Period", "Summary"]
+    },
+    {
+      "id": "notice",
+      "name": "Notice",
+      "description": "A document providing information or warning. Look for announcements, deadlines, and important dates.",
+      "examples": ["Policy notice", "Change notice", "Legal notice", "Termination notice"],
+      "common_terms": ["Notice", "Attention", "Important", "Please note", "Effective", "Change"]
+    },
+    {
+      "id": "memo",
+      "name": "Memo",
+      "description": "A brief communication within an organization. Look for short format, specific topics, and internal distribution.",
+      "examples": ["Internal memo", "Office memo", "Reminder memo"],
+      "common_terms": ["Memo", "Memorandum", "To", "From", "Subject", "Date", "RE:"]
+    },
+    {
+      "id": "receipt",
+      "name": "Receipt",
+      "description": "A document acknowledging payment. Look for amount paid, date, items purchased, and merchant information.",
+      "examples": ["Purchase receipt", "Payment confirmation", "Transaction record"],
+      "common_terms": ["Receipt", "Paid", "Amount", "Total", "Date", "Thank you", "Customer"]
+    }
+  ]
+}

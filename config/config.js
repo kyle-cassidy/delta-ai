@@ -35,7 +35,7 @@ module.exports = {
   addAIProcessedTag: process.env.ADD_AI_PROCESSED_TAG || 'no',
   addAIProcessedTags: process.env.AI_PROCESSED_TAG_NAME || 'ai-processed',
   paperless: {
-    apiUrl: process.env.PAPERLESS_API_URL,
+    apiUrl: process.env.PAPERLESS_API_URL || 'http://host.docker.internal:8000/api',
     apiToken: process.env.PAPERLESS_API_TOKEN
   },
   openai: {

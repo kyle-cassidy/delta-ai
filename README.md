@@ -1,8 +1,8 @@
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/clusterzx/paperless-ai) ![Docker Pulls](https://img.shields.io/docker/pulls/clusterzx/paperless-ai) ![GitHub User's stars](https://img.shields.io/github/stars/clusterzx) ![GitHub License](https://img.shields.io/github/license/clusterzx/paperless-ai?cacheSeconds=1)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Delta-Analytical-Corp/delta-data-platform) ![GitHub License](https://img.shields.io/github/license/Delta-Analytical-Corp/delta-data-platform?cacheSeconds=1)
 
-# Paperless-AI
+# Delta-AI
 
-An automated document analyzer for Paperless-ngx using OpenAI API, Ollama and all OpenAI API compatible Services to automatically analyze and tag your documents. \
+An automated document analyzer for Delta-DMS (Paperless-ngx fork) using OpenAI API, Ollama and all OpenAI API compatible Services to automatically analyze and tag your documents. \
 It features: Automode, Manual Mode, Ollama and OpenAI, a Chat function to query your documents with AI, a modern and intuitive Webinterface. \
 \
 **Following Services and OpenAI API compatible services have been successfully tested:**
@@ -18,7 +18,7 @@ It features: Automode, Manual Mode, Ollama and OpenAI, a Chat function to query 
 - Gemini (Google)
 - ... and there are possibly many more
 
-![PPAI_SHOWCASE3](https://github.com/user-attachments/assets/1fc9f470-6e45-43e0-a212-b8fa6225e8dd)
+![Delta-AI Showcase](Delta-Analytical-logo.png)
 
 
 ## Features
@@ -41,8 +41,23 @@ It features: Automode, Manual Mode, Ollama and OpenAI, a Chat function to query 
 
 ## Installation
 
-Visit the Wiki for installation:\
-[Click here for Installation](https://github.com/clusterzx/paperless-ai/wiki/2.-Installation)
+See Delta Analytical documentation for detailed installation instructions.
+
+### Paperless-ngx API Permissions
+
+Delta-AI requires specific permissions in Paperless-ngx to function correctly. The user associated with your API token must have the following permissions:
+
+- **View** access to Documents
+- **View** access to Document Types
+- **View** access to Correspondents
+- **View** access to Tags
+- **View** access to Custom Fields
+- **View** access to Users
+
+If you encounter 403 Forbidden errors, check the permissions for your API user in the Paperless-ngx admin panel.
+
+For more details, see [Paperless Permissions](docs/PAPERLESS_PERMISSIONS.md).
+
 -------------------------------------------
 
 
@@ -84,7 +99,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-- [Paperless-ngx](https://github.com/paperless-ngx/paperless-ngx) for the amazing document management system
+- [Delta-DMS](Paperless-ngx fork) for the amazing document management system
 - OpenAI API
 - The Express.js and Node.js communities for their excellent tools
 
@@ -92,8 +107,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 If you encounter any issues or have questions:
 
-1. Check the [Issues](https://github.com/clusterzx/paperless-ai/issues) section
-2. Create a new issue if yours isn't already listed
+1. Contact Delta Analytical Support
+2. Report issues through the official support channels
 3. Provide detailed information about your setup and the problem
 
 ## Roadmap (DONE)

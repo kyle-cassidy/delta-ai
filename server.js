@@ -7,6 +7,7 @@ const paperlessService = require('./services/paperlessService');
 const AIServiceFactory = require('./services/aiServiceFactory');
 const documentModel = require('./models/document');
 const setupService = require('./services/setupService');
+const autoSetupService = require('./services/autoSetupService');
 const setupRoutes = require('./routes/setup');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
@@ -76,7 +77,7 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
  *   get:
  *     summary: Retrieve the OpenAPI specification
  *     description: |
- *       Returns the complete OpenAPI specification for the Paperless-AI API.
+ *       Returns the complete OpenAPI specification for the Delta-AI API.
  *       This endpoint attempts to serve a static OpenAPI JSON file first, falling back
  *       to dynamically generating the specification if the file cannot be read.
  *       
@@ -186,7 +187,7 @@ async function processDocument(doc, existingTags, existingCorrespondentList, own
   const documentEditable = await paperlessService.getPermissionOfDocument(doc.id);
   if (!documentEditable) {
     console.log(`[DEBUG] Document belongs to: ${documentEditable}, skipping analysis`);
-    console.log(`[DEBUG] Document ${doc.id} Not Editable by Paper-Ai User, skipping analysis`);
+    console.log(`[DEBUG] Document ${doc.id} Not Editable by Delta-AI User, skipping analysis`);
     return null;
   }else {
     console.log(`[DEBUG] Document ${doc.id} rights for AI User - processed`);
@@ -524,13 +525,18 @@ async function startScanning() {
   try {
     const isConfigured = await setupService.isConfigured();
     if (!isConfigured) {
-      console.log(`Setup not completed. Visit http://your-machine-ip:${process.env.PAPERLESS_AI_PORT || 3000}/setup to complete setup.`);
+      console.log(`Setup not completed. Visit http://your-machine-ip:${process.env.DELTA_AI_PORT || 3000}/setup to complete setup.`);
     }
 
-    const userId = await paperlessService.getOwnUserID();
-    if (!userId) {
-      console.error('Failed to get own user ID. Abort scanning.');
-      return;
+    // For development mode, skip the user ID check
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Running in development mode, skipping user ID check');
+    } else {
+      const userId = await paperlessService.getOwnUserID();
+      if (!userId) {
+        console.error('Failed to get own user ID. Abort scanning.');
+        return;
+      }
     }
 
     console.log('Configured scan interval:', config.scanInterval);
@@ -591,10 +597,17 @@ process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
 // Start server
 async function startServer() {
-  const port = process.env.PAPERLESS_AI_PORT || 3000;
+  const port = process.env.DELTA_AI_PORT || 3000;
   try {
     await initializeDataDirectory();
     await saveOpenApiSpec(); // Save OpenAPI specification on startup
+    
+    // Run auto setup if admin credentials are provided in .env
+    if (process.env.ADMIN_USER && process.env.ADMIN_PASSWORD) {
+      console.log('Admin credentials found, performing auto setup...');
+      await autoSetupService.performAutoSetup();
+    }
+    
     app.listen(port, () => {
       console.log(`Server running on port ${port}`);
       startScanning();

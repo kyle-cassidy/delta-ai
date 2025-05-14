@@ -1,27 +1,34 @@
 services:
-  paperless-ai:
-    image: clusterzx/paperless-ai
-    container_name: paperless-ai
+  delta-ai:
+    build: .
+    image: delta-ai
+    container_name: delta-ai
     restart: unless-stopped
     cap_drop:
       - ALL
     security_opt:
       - no-new-privileges=true
+    command: npm run dev
     environment:
       - PUID=1000
       - PGID=1000
-      - PAPERLESS_AI_PORT=${PAPERLESS_AI_PORT:-3000}
-      - PAPERLESS_API_URL=http://delta-dms:8000/api
-      - PAPERLESS_API_TOKEN=2a565750b033fc0ccd0c19b54303ca31e37ae254
+      - DELTA_AI_PORT=${DELTA_AI_PORT:-3000}
+      - PAPERLESS_API_URL=http://host.docker.internal:8000/api
+      - PAPERLESS_API_TOKEN=76a567938fb8d06a06b1263e39cdc21662bacc12
+      - NODE_ENV=development
     ports:
-      - "3000:${PAPERLESS_AI_PORT:-3000}"
+      - "3000:${DELTA_AI_PORT:-3000}"
     volumes:
-      - paperless-ai_data:/app/data
+      - .:/app
+      - /app/node_modules
+      - delta-ai_data:/app/data
     networks:
       - delta-internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
-  paperless-ai_data:
+  delta-ai_data:
 
 networks:
   delta-internal:
