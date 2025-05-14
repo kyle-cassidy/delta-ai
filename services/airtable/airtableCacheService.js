@@ -22,6 +22,9 @@ class AirtableCacheService {
         this.apiKey = apiKey;
         this.cacheDirectory = cacheDirectory;
         
+        console.log(`Initializing AirtableCacheService with API key ${apiKey.substring(0, 5)}...`);
+        console.log(`Cache directory: ${cacheDirectory}`);
+        
         // Configure Airtable
         Airtable.configure({ apiKey: this.apiKey });
         
@@ -42,7 +45,7 @@ class AirtableCacheService {
         this.cronJob = null;
         
         // Cache configuration
-        this.MAX_CACHE_AGE_HOURS = 25; // How old can file cache be before forcing live fetch
+        this.MAX_CACHE_AGE_HOURS = 0; // Force live fetch every time during development
     }
 
     /**
@@ -82,13 +85,36 @@ class AirtableCacheService {
     async _saveBaseCacheToFile(baseId, baseData) {
         await this._ensureCacheDirectory();
         const filePath = this._getCacheFilePath(baseId);
+        console.log(`Attempting to save cache to: ${filePath}`);
+        
+        // Extract just the records without the Maps (which don't serialize well)
         const dataToSave = {
             lastFetched: new Date().toISOString(),
-            tables: baseData.tables // Assuming baseData.tables contains the actual table records
+            tables: {}
         };
+        
+        // For each table, we just save the 'all' array which contains all records
+        for (const [tableName, tableData] of Object.entries(baseData.tables)) {
+            if (tableData && Array.isArray(tableData.all)) {
+                dataToSave.tables[tableName] = tableData.all;
+                console.log(`Saving ${tableData.all.length} records for table ${tableName}`);
+            } else {
+                console.warn(`Table ${tableName} has no 'all' array or it's not an array. Saving empty array.`);
+                dataToSave.tables[tableName] = [];
+            }
+        }
+        
         try {
             await fs.writeFile(filePath, JSON.stringify(dataToSave, null, 2));
             console.log(`Cache saved for base ${baseId} to ${filePath}`);
+            
+            // Verify file was created
+            try {
+                const stats = await fs.stat(filePath);
+                console.log(`Cache file created successfully, size: ${stats.size} bytes`);
+            } catch (statError) {
+                console.error(`Failed to verify cache file creation:`, statError);
+            }
         } catch (error) {
             console.error(`Error saving cache for base ${baseId} to ${filePath}:`, error);
         }
@@ -166,12 +192,17 @@ class AirtableCacheService {
         if (!this.cache[baseId]) this.cache[baseId] = { tables: {}, lastFetched: null };
         if (!this.cache[baseId].tables[tableName]) this.cache[baseId].tables[tableName] = {};
 
-        this.cache[baseId].tables[tableName].all = records;
+        // Ensure records is an array
+        const recordsArray = Array.isArray(records) ? records : [];
+        
+        this.cache[baseId].tables[tableName].all = recordsArray;
         const byIdMap = new Map();
-        records.forEach(record => {
+        
+        recordsArray.forEach(record => {
             const key = primaryKeyFn ? primaryKeyFn(record) : record.id;
             if (key) byIdMap.set(key, record);
         });
+        
         this.cache[baseId].tables[tableName].byId = byIdMap;
     }
 
@@ -221,41 +252,68 @@ class AirtableCacheService {
 
         const baseConfigs = {
             productRegistrationTracking: [
-                { tableId: 'tblyPyT9SZWkGFcoD', nameInCache: 'registrationTracking' },
-                { tableId: 'tblYe0DJIkwk758Az', nameInCache: 'products' },
-                { tableId: 'tblDSlAkIve4Ap9u8', nameInCache: 'clientList' },
-                { tableId: 'tblU5FD7w4hOEAM8k', nameInCache: 'states' },
-                { tableId: 'tbl29guRFK9Q2l7CL', nameInCache: 'regReqs' },
+                { tableId: 'tblyPyT9SZWkGFcoD', nameInCache: 'registrationTracking', pkFn: (r) => r.id },
+                { tableId: 'tblYe0DJIkwk758Az', nameInCache: 'products', pkFn: (r) => r.fields?.['Product ID'] || r.id },
+                { tableId: 'tblDSlAkIve4Ap9u8', nameInCache: 'clientList', pkFn: (r) => r.fields?.['Client ID'] || r.id },
+                { tableId: 'tblU5FD7w4hOEAM8k', nameInCache: 'states', pkFn: (r) => r.fields?.['State Abbreviation'] || r.id },
+                { tableId: 'tbl29guRFK9Q2l7CL', nameInCache: 'regReqs', pkFn: (r) => r.fields?.['Requirement ID'] || r.id },
             ],
             deltaDocuments: [
                 { tableId: 'tblNYeqUgJBa9l2XD', nameInCache: 'documentTypes', pkFn: (r) => r.fields?.doc_type_id },
-                { tableId: 'tbl6CrMvhmVCf7mdQ', nameInCache: 'clients' },
-                { tableId: 'tblD6G1lBmSsGCxfh', nameInCache: 'states' },
-                { tableId: 'tblW9piLEHybdSOlT', nameInCache: 'products' },
-                { tableId: 'tblImOnbMhtkhQ1Jt', nameInCache: 'tags' },
+                { tableId: 'tbl6CrMvhmVCf7mdQ', nameInCache: 'clients', pkFn: (r) => r.fields?.['Client ID'] || r.id },
+                { tableId: 'tblD6G1lBmSsGCxfh', nameInCache: 'states', pkFn: (r) => r.fields?.['State Name'] || r.id },
+                { tableId: 'tblW9piLEHybdSOlT', nameInCache: 'products', pkFn: (r) => r.fields?.['Product Name'] || r.id },
+                { tableId: 'tblImOnbMhtkhQ1Jt', nameInCache: 'tags', pkFn: (r) => r.fields?.['Tag Name'] || r.id },
             ]
         };
 
-        for (const [baseName, tablesConfig] of Object.entries(baseConfigs)) {
-            const baseId = this.baseIds[baseName];
-            let loadedFromStorage = false;
+        for (const baseName of Object.keys(this.baseIds)) {
+            this.cache[baseName] = this.cache[baseName] || { tables: {}, lastFetched: null };
+            const tablesForThisBase = baseConfigs[baseName];
+
+            if (!tablesForThisBase) {
+                console.warn(`No table configurations found for base: ${baseName}. Skipping this base.`);
+                continue;
+            }
+
+            // Ensure all configured table structures are initialized in the in-memory cache
+            for (const tableConfig of tablesForThisBase) {
+                if (!this.cache[baseName].tables[tableConfig.nameInCache]) {
+                    this.cache[baseName].tables[tableConfig.nameInCache] = { all: [], byId: new Map() };
+                }
+            }
             
+            let loadedSuccessfullyFromCacheFile = false;
             if (!forceLiveFetch) {
-                const storedBaseData = await this._loadBaseCacheFromFile(baseId);
-                if (storedBaseData && storedBaseData.tables) {
-                    this.cache[baseName] = { tables: {}, lastFetched: storedBaseData.lastFetched };
-                    for (const tableConfig of tablesConfig) {
-                        const records = storedBaseData.tables[tableConfig.nameInCache] || [];
-                        this._populateInMemoryCacheForTable(baseName, tableConfig.nameInCache, records, tableConfig.pkFn);
+                const cacheFilePath = this._getCacheFilePath(this.baseIds[baseName]);
+                try {
+                    const cachedBase = await this._loadBaseCacheFromFile(this.baseIds[baseName]);
+                    if (cachedBase && cachedBase.lastFetched) {
+                        console.log(`Found cache file for base ${baseName} at ${cacheFilePath}. Last fetched: ${cachedBase.lastFetched}`);
+                        this.cache[baseName].lastFetched = cachedBase.lastFetched;
+
+                        for (const tableConfig of tablesForThisBase) {
+                            const tableName = tableConfig.nameInCache;
+                            if (cachedBase.tables && cachedBase.tables[tableName] && Array.isArray(cachedBase.tables[tableName])) {
+                                console.log(`Loading ${cachedBase.tables[tableName].length} records for table ${tableName} in base ${baseName} from cache file.`);
+                                this._populateInMemoryCacheForTable(baseName, tableName, cachedBase.tables[tableName], tableConfig.pkFn);
+                            } else {
+                                console.warn(`Data for table ${tableName} in base ${baseName} is missing or not in expected format in cache file. Will attempt live fetch.`);
+                            }
+                        }
+                        loadedSuccessfullyFromCacheFile = true;
+                        console.log(`Finished attempting to populate in-memory cache for base ${baseName} from file.`);
+                    } else {
+                        console.log(`Cache file not found or invalid for base ${baseName} at ${cacheFilePath}. Will fetch live.`);
                     }
-                    loadedFromStorage = true;
-                    console.log(`Successfully populated in-memory cache for base ${baseName} from stored file.`);
+                } catch (error) {
+                    console.error(`Error loading cache for base ${baseName} from ${cacheFilePath}: ${error.message}. Will fetch live.`);
                 }
             }
 
-            if (!loadedFromStorage || forceLiveFetch) {
-                console.log(`${forceLiveFetch ? 'Forcing live fetch' : 'Cache not loaded from file or stale'} for base ${baseName}. Fetching live...`);
-                await this._fetchAndCacheBaseLive(baseName, baseId, tablesConfig);
+            if (forceLiveFetch || !loadedSuccessfullyFromCacheFile) {
+                console.log(`Fetching live data for base ${baseName} (Force live: ${forceLiveFetch}, Not loaded from file: ${!loadedSuccessfullyFromCacheFile})`);
+                await this._fetchAndCacheBaseLive(baseName, this.baseIds[baseName], tablesForThisBase);
             }
         }
 
@@ -336,7 +394,31 @@ class AirtableCacheService {
      * @returns {Array} Array of records (empty if not found)
      */
     getAllRecords(baseName, tableName) {
-        return this.cache[baseName]?.tables[tableName]?.all || [];
+        console.log(`Getting all records for ${baseName}/${tableName}`);
+        
+        if (!this.cache[baseName]) {
+            console.log(`Base ${baseName} not found in cache`);
+            return [];
+        }
+        
+        if (!this.cache[baseName].tables || !this.cache[baseName].tables[tableName]) {
+            console.log(`Table ${tableName} not found in base ${baseName}`);
+            return [];
+        }
+        
+        const records = this.cache[baseName].tables[tableName].all;
+        if (!records) {
+            console.log(`No 'all' property found for table ${tableName} in base ${baseName}`);
+            return [];
+        }
+        
+        if (!Array.isArray(records)) {
+            console.log(`Records for ${baseName}/${tableName} is not an array, type: ${typeof records}`);
+            return [];
+        }
+        
+        console.log(`Found ${records.length} records for ${baseName}/${tableName}`);
+        return records;
     }
 
     /**
@@ -346,17 +428,29 @@ class AirtableCacheService {
      */
     getCacheStatus() {
         const status = {};
+        console.log('Getting cache status...');
+        console.log('Cache keys:', Object.keys(this.cache));
         
         for (const [baseName, baseData] of Object.entries(this.cache)) {
+            console.log(`Processing base: ${baseName}`);
             status[baseName] = {
                 lastFetched: baseData.lastFetched,
                 tables: {}
             };
             
-            for (const [tableName, tableData] of Object.entries(baseData.tables)) {
-                status[baseName].tables[tableName] = {
-                    recordCount: tableData.all?.length || 0
-                };
+            if (baseData.tables) {
+                console.log(`Tables in ${baseName}:`, Object.keys(baseData.tables));
+                
+                for (const [tableName, tableData] of Object.entries(baseData.tables)) {
+                    const recordCount = tableData.all?.length || 0;
+                    console.log(`Table ${tableName} has ${recordCount} records`);
+                    
+                    status[baseName].tables[tableName] = {
+                        recordCount: recordCount
+                    };
+                }
+            } else {
+                console.log(`No tables found in ${baseName}`);
             }
         }
         

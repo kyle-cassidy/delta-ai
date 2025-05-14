@@ -16,12 +16,17 @@ services:
       - PAPERLESS_API_URL=http://host.docker.internal:8000/api
       - PAPERLESS_API_TOKEN=76a567938fb8d06a06b1263e39cdc21662bacc12
       - NODE_ENV=development
+      - AIRTABLE_API_KEY=patLMylK6KOXztjrt.d17821b433d65f34e024cb9c77d1fc96a1144366367ce9137f4d4f68abe4fac4
+      - AIRTABLE_CACHE_DIR=./data/cache/airtable
+      - AIRTABLE_ENABLE_SCHEDULED_REFRESH=yes
+      - AIRTABLE_REFRESH_CRON=0 2 * * *
     ports:
       - "3000:${DELTA_AI_PORT:-3000}"
     volumes:
       - .:/app
       - /app/node_modules
       - delta-ai_data:/app/data
+      - ./data/cache/airtable:/app/data/cache/airtable
     networks:
       - delta-internal
     extra_hosts:
