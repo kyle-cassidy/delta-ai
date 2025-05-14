@@ -74,6 +74,12 @@ The `/services` directory contains core business logic and integrations:
 - `debugService.js`: Debugging utilities and helpers
 - `manualService.js`: Manual operation handling
 
+#### External Data Integration
+- `/services/airtable`: Airtable data integration services
+  - `airtableCacheService.js`: Fetches and caches data from Airtable bases
+  - `airtableServiceFactory.js`: Factory for initializing and managing cache services
+  - `index.js`: Exports singleton instance and helper functions
+
 ### 3. Models
 
 The `/models` directory contains data model definitions:
@@ -89,6 +95,7 @@ The `/routes` directory defines API endpoints and request handlers:
 
 - `auth.js`: Authentication-related routes
 - `setup.js`: Application setup and configuration routes
+- `airtable.js`: Routes for Airtable data management and visualization
 - Additional routes defined directly in server.js:
   - Dashboard routes
   - Chat interface routes
@@ -110,6 +117,8 @@ The `/views` directory contains EJS templates for UI rendering:
 - `settings.ejs`: Application configuration interface
 - `setup.ejs`: Initial setup wizard
 - `template.ejs`: Generic template for new pages
+- `airtableCacheViewer.ejs`: Interface for exploring cached Airtable data
+- `error.ejs`: Standardized error display page
 
 ### 6. Public Assets
 
@@ -180,6 +189,10 @@ The application can be configured through:
    - `DELTA_AI_PORT`: Application port
    - `AI_PROVIDER`: AI provider selection (openai, azure, ollama, custom)
    - `OPENAI_API_KEY`: OpenAI API key
+   - `AIRTABLE_API_KEY`: Airtable API key for data integration
+   - `AIRTABLE_CACHE_DIR`: Directory for Airtable cache storage
+   - `AIRTABLE_ENABLE_SCHEDULED_REFRESH`: Enable/disable scheduled cache refresh
+   - `AIRTABLE_REFRESH_CRON`: Cron expression for cache refresh schedule
    - Various provider-specific settings
 
 2. **Configuration Files**:
@@ -191,6 +204,7 @@ The application can be configured through:
 
 ### Code Organization
 - Services use singleton pattern (exports instantiated class)
+- Factory pattern employed for service initialization (e.g., AirtableServiceFactory)
 - Routes follow RESTful patterns where possible
 - Views use EJS templating with layout inheritance
 - Client-side code separates concerns (UI, data fetching, state)

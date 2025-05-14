@@ -1,156 +1,158 @@
 # Airtable Integration for Delta-AI
 
-This document describes how to set up and use the Airtable integration in the Delta-AI application.
+This document describes the Airtable integration in Delta-AI, which provides contextual data for document classification and metadata extraction.
 
 ## Overview
 
-The Airtable integration provides a way to cache data from Airtable bases and tables for use in document classification and metadata extraction. It maintains both an in-memory cache for quick access and a file-based cache for persistence between application restarts.
+Delta-AI integrates with Airtable to access and utilize structured data for improved document processing. It connects to two primary Airtable bases:
 
-## Configuration
+1. **Product Registration Tracking** (Base ID: `appkaXsw8Q6dSltKd`)
+   - Provides contextual information about product registrations, clients, states, and regulatory requirements
+   - Used to enhance document classification and metadata extraction with relevant context
 
-The Airtable integration can be configured using environment variables. These can be added to your `.env` file.
+2. **Delta Documents** (Base ID: `appkWl7oSFxka7JEu`)
+   - Serves as a structured repository for document data
+   - Provides classification schemas and document type definitions
 
-### Required Configuration
+## Setup and Configuration
 
-- `AIRTABLE_API_KEY`: Your Airtable API key. This is required for the integration to work.
+### Environment Variables
 
-### Optional Configuration
-
-- `AIRTABLE_CACHE_DIR`: Directory to store cache files. Defaults to `./data/cache/airtable`.
-- `AIRTABLE_ENABLE_SCHEDULED_REFRESH`: Whether to enable scheduled cache refresh. Values: `yes` or `no`. Defaults to `yes`.
-- `AIRTABLE_REFRESH_CRON`: Cron expression for refresh schedule. Defaults to `0 2 * * *` (2 AM daily).
-
-Example `.env` configuration:
+Add the following environment variables to your `.env` file or Docker environment:
 
 ```
-AIRTABLE_API_KEY=your_api_key_here
+AIRTABLE_API_KEY=your_airtable_api_key
 AIRTABLE_CACHE_DIR=./data/cache/airtable
 AIRTABLE_ENABLE_SCHEDULED_REFRESH=yes
 AIRTABLE_REFRESH_CRON=0 2 * * *
 ```
 
-## Configured Airtable Bases
+### Docker Volume Configuration
 
-The Airtable integration is currently configured to work with two specific Airtable bases:
+To ensure cache persistence between container restarts, add a volume mount in your `docker-compose.yml`:
 
-1. **Product Registration Tracking** (Base ID: `appkaXsw8Q6dSltKd`)
-   - Used as the primary source of contextual information
-   - Key tables:
-     - Registration Tracking (Table ID: `tblyPyT9SZWkGFcoD`)
-     - Products (Table ID: `tblYe0DJIkwk758Az`)
-     - Client List (Table ID: `tblDSlAkIve4Ap9u8`)
-     - States (Table ID: `tblU5FD7w4hOEAM8k`)
-     - Reg Reqs (Table ID: `tbl29guRFK9Q2l7CL`)
-
-2. **Delta Documents** (Base ID: `appkWl7oSFxka7JEu`)
-   - Used as the primary destination and structured repository
-   - Key tables:
-     - document_types (Table ID: `tblNYeqUgJBa9l2XD`)
-     - clients (Table ID: `tbl6CrMvhmVCf7mdQ`)
-     - states (Table ID: `tblD6G1lBmSsGCxfh`)
-     - products (Table ID: `tblW9piLEHybdSOlT`)
-     - tags (Table ID: `tblImOnbMhtkhQ1Jt`)
-
-## Admin Interface
-
-The Airtable integration includes an admin interface to view and manage the cache. This can be accessed at the following URL:
-
+```yaml
+volumes:
+  - ./data/cache/airtable:/app/data/cache/airtable
 ```
-/admin/airtable/cache-viewer
-```
-
-### Admin Interface Features
-
-- View the status of the cache for each base
-- Browse the tables and records in the cache
-- Manually trigger a cache refresh
-
-## Using the Airtable Cache Service in Code
-
-To use the AirtableCacheService in your code, you can import it from the `services/airtable` module.
-
-```javascript
-const { getAirtableCacheService } = require('./services/airtable');
-const config = require('./config/config');
-
-async function example() {
-  // Get the cache service
-  const cacheService = await getAirtableCacheService(config);
-  
-  // Get all records from a table
-  const records = cacheService.getAllRecords('deltaDocuments', 'documentTypes');
-  
-  // Get a specific record by ID
-  const record = cacheService.getRecordById('deltaDocuments', 'documentTypes', 'recXXXXXXXXXXXXXX');
-  
-  // Get a document type by doc_type_id
-  const docType = cacheService.getDocumentTypeByDocTypeId('REG_CERT');
-  
-  // Get the status of the cache
-  const status = cacheService.getCacheStatus();
-}
-```
-
-## Cache Refresh Mechanism
-
-The cache is refreshed in the following ways:
-
-1. **On Application Startup**: The cache is initialized when the application starts. It will try to load from the file-based cache first, and if the cache is not found or is stale, it will fetch fresh data from Airtable.
-
-2. **Scheduled Refresh**: If enabled, the cache will be refreshed on a schedule defined by the cron expression in the configuration. The default is daily at 2 AM.
-
-3. **Manual Refresh**: The cache can be manually refreshed through the admin interface by clicking the "Refresh Cache" button.
 
 ## Cache Structure
 
-The cache is stored in memory and on disk with the following structure:
+The Airtable integration uses a two-tiered caching system:
+
+1. **In-Memory Cache**
+   - Fast access during document processing
+   - Organized by base, table, and record
+   - Uses Maps for O(1) lookups by ID
+
+2. **File-Based Cache**
+   - Persists between application restarts
+   - Located in `AIRTABLE_CACHE_DIR`
+   - Filename pattern: `cache_<baseId>.json`
+
+## Key Components
+
+### AirtableCacheService
+
+Primary service that handles fetching, caching, and providing access to Airtable data.
+
+**Location**: `services/airtable/airtableCacheService.js`
+
+**Key Features**:
+- Fetches data from Airtable API
+- Maintains in-memory cache structure
+- Manages file-based cache persistence
+- Provides accessor methods for cached data
+- Handles scheduled cache refresh
+
+### AirtableServiceFactory
+
+Factory for creating and managing AirtableCacheService instances.
+
+**Location**: `services/airtable/airtableServiceFactory.js`
+
+**Key Features**:
+- Singleton pattern implementation
+- Handles initialization and configuration
+- Manages scheduled refresh jobs
+
+### Admin Interface
+
+A web interface for viewing and managing the Airtable cache.
+
+**Access URL**: `/admin/airtable/cache-viewer`
+
+**Features**:
+- Browse cached data by base and table
+- View record details
+- Manually refresh the cache
+
+## Using Cached Airtable Data
+
+### Accessing the Cache Service
 
 ```javascript
-{
-  "productRegistrationTracking": {
-    "lastFetched": "2023-05-13T12:00:00.000Z",
-    "tables": {
-      "registrationTracking": [...],
-      "products": [...],
-      // Other tables
-    }
-  },
-  "deltaDocuments": {
-    "lastFetched": "2023-05-13T12:00:00.000Z",
-    "tables": {
-      "documentTypes": [...],
-      "clients": [...],
-      // Other tables
-    }
-  }
-}
+const airtableServices = require('./services/airtable');
+const config = require('./config/config');
+
+// Get the cache service instance
+const cacheService = await airtableServices.getAirtableCacheService(config);
 ```
 
-Each table in the cache has two data structures:
+### Retrieving Records
 
-1. `all`: An array of all records in the table
-2. `byId`: A Map with record IDs as keys and record objects as values for quick lookups
+```javascript
+// Get all records from a table
+const allDocumentTypes = cacheService.getAllRecords('deltaDocuments', 'documentTypes');
 
-## Error Handling
+// Get a specific record by ID
+const client = cacheService.getRecordById('deltaDocuments', 'clients', 'rec123456');
 
-The Airtable integration includes error handling for common issues:
+// Get a document type by doc_type_id
+const certificateType = cacheService.getDocumentTypeByDocTypeId('REG_CERT');
+```
 
-- If the Airtable API key is not configured, the integration will log a warning and skip initialization.
-- If a table cannot be fetched from Airtable, the integration will log an error and continue with other tables.
-- If the cache file cannot be read or written, the integration will log an error and proceed with the in-memory cache.
+### Refreshing the Cache
 
-## Implementation Details
+```javascript
+// Force refresh the entire cache
+await cacheService.initializeCache(true);
+```
 
-The Airtable integration is implemented using the following components:
+## Refresh Schedule
 
-- `AirtableCacheService`: The main service that handles fetching, caching, and retrieving data from Airtable.
-- `AirtableServiceFactory`: A factory that creates and manages instances of the AirtableCacheService.
-- Routes and views for the admin interface.
+By default, the cache refreshes daily at 2 AM. You can customize this schedule by changing the `AIRTABLE_REFRESH_CRON` environment variable to a valid cron expression.
 
-The integration uses the official Airtable.js package for API access and Node's built-in file system module for persistence.
+## Cached Tables
 
-## Additional Documentation
+### Product Registration Tracking Base
 
-For more detailed documentation on the Airtable API, please refer to the [Airtable API documentation](https://airtable.com/developers/web/api/introduction).
+- `registrationTracking`: Product registration data
+- `products`: Product information
+- `clientList`: Client details
+- `states`: State information
+- `regReqs`: Regulatory requirements
 
-For a detailed strategy on how the Airtable integration is used in the Delta-AI application, see the [Airtable Exploration and Integration Strategy](../planning/airtable_exploration_and_integration_strategy.md) document.
+### Delta Documents Base
+
+- `documentTypes`: Document classification definitions
+- `clients`: Client information
+- `states`: State information
+- `products`: Product details
+- `tags`: Document tag definitions
+
+## Troubleshooting
+
+If you encounter issues with the Airtable integration:
+
+1. **Check API Key**: Ensure your `AIRTABLE_API_KEY` is correct and has access to the required bases
+2. **Verify Cache Directory**: Make sure the `AIRTABLE_CACHE_DIR` exists and is writable
+3. **Force Cache Refresh**: Visit `/admin/airtable/cache-viewer` and use the refresh button
+4. **Check Logs**: Look for Airtable-related messages in the application logs
+
+## Additional Notes
+
+- Cache files can be large for bases with many records
+- Consider field selection optimizations for production use with very large bases
+- The admin interface limits display to 100 records per table to maintain performance
+EOL < /dev/null

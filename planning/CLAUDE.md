@@ -44,6 +44,11 @@ This document provides specific instructions for Claude when assisting with the 
 - **UI consistency**: Maintain consistent UI patterns across views
 - **Configuration flexibility**: Keep configuration options flexible through environment variables and config files
 - **Paperless-ngx integration**: Carefully document and test changes to the Paperless-ngx integration
+- **Airtable integration**: Follow established patterns for Airtable cache service and data access
+  - Use the factory pattern via AirtableServiceFactory
+  - Access cached data through the service's accessor methods
+  - Maintain proper error handling for API and cache operations
+  - Respect the cache refresh schedule (default: daily at 2 AM)
 
 ## Testing and Quality Assurance
 
