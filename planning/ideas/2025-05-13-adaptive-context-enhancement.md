@@ -16,14 +16,27 @@ The current AI-based document processing system uses static, one-size-fits-all p
 
 Create a dynamic context injection system with prompt chaining that:
 
-1. **Initial Analysis**: Run first-pass analysis with minimal context to identify basic document attributes
-2. **Context Retrieval**: Query Airtable for targeted context based on initial analysis
+1. **Initial Analysis**: Run first-pass analysis with minimal context to identify basic document attributes, document type, and entity extraction
+2. **Context Retrieval**: Query Airtable for targeted context based on initial analysis. narrow down the scope of the query based on the document type and relevant entities: clients and regulators. 
 3. **Enhanced Analysis**: Re-process with enriched, relevant context for improved accuracy
-4. **Progressive Refinement**: Support multiple analysis stages that narrow focus with each step
+4. **Progressive Refinement**: Support multiple analysis stages that narrow focus with each step:
+    - stages:
+        - Document type classification
+        - Entity extraction
+        - structured data extraction
+        - field extraction
+        - validation
+    - strategies:
+        - keyword search
+        - fuzzy matching
+        - regex matching
+        - LLM classification
 
 ## Major Components
 
 ### Airtable Integration Service
+
+relevant idea: [airtable-context-integration](2025-05-13-airtable-context-integration.md)
 
 Build a dedicated service that:
 - Provides efficient, cached access to Airtable data
@@ -34,16 +47,24 @@ Build a dedicated service that:
 ```javascript
 // Conceptual example
 class AirtableContextService {
-  async getClientContext(clientId) {
-    // Retrieve client-specific data from Airtable
+  async getClientRegistrationsContext(clientId) {
+    // Retrieve client-specific Registration data from Airtable Registration Tracking table in Registration Tracking Base.
+    // return a list of registrations, with the following fields:
+    // NOTE: update with actual field names
+    // - client_id
+    // - state_id
+    // - product_id
+    // - registration_id
+    // - registration_type
+    // - registration_status
   }
   
-  async getRegulatorContext(state, documentType) {
-    // Get regulatory requirements for specific state/document type
-  }
+  async getRegulatorRegistrationsContext(state_id, ) {
+    // Get all possible registrations for a specific state/document type
+    // }
   
-  async getProductRegistrations(clientId, state) {
-    // Get client's product registrations for specific state
+  async getProductRegistrations(client_id, state_id) {
+    // Get client's product registrations for specific state. return a list of registrations, with the following fields:
   }
 }
 ```

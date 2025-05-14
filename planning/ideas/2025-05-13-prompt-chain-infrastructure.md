@@ -188,10 +188,11 @@ class ContextResolver {
 ### 1. Regulatory Document Processing
 
 Process flow:
-1. Initial classification identifies document as "California EPA Submission"
-2. Second stage uses California-specific context to identify exact form type
-3. Third stage extracts required fields using form-specific templates
-4. Final aggregation combines all extracted information
+1. Document is scanned and uploaded to Delta-DMS, or imported from an email.
+2. Initial classification identifies document as "California EPA Submission"
+3. Second stage uses California-specific context to identify exact form type
+4. Third stage extracts required fields using form-specific templates
+5. Final aggregation combines all extracted information
 
 ### 2. Multi-Document Correlation
 
