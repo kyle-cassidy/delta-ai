@@ -56,6 +56,12 @@ module.exports = {
     deploymentName: process.env.AZURE_DEPLOYMENT_NAME || '',
     apiVersion: process.env.AZURE_API_VERSION || '2023-05-15'
   },
+  airtable: {
+    apiKey: process.env.AIRTABLE_API_KEY || '',
+    cacheDirectory: process.env.AIRTABLE_CACHE_DIR || './data/cache/airtable',
+    enableScheduledRefresh: parseEnvBoolean(process.env.AIRTABLE_ENABLE_SCHEDULED_REFRESH, 'yes'),
+    refreshCronExpression: process.env.AIRTABLE_REFRESH_CRON || '0 2 * * *' // Default: 2 AM daily
+  },
   customFields: process.env.CUSTOM_FIELDS || '',
   aiProvider: process.env.AI_PROVIDER || 'openai',
   scanInterval: process.env.SCAN_INTERVAL || '*/30 * * * *',

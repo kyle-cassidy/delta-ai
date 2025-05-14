@@ -9,12 +9,14 @@ const documentModel = require('./models/document');
 const setupService = require('./services/setupService');
 const autoSetupService = require('./services/autoSetupService');
 const setupRoutes = require('./routes/setup');
+const airtableRoutes = require('./routes/airtable');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const Logger = require('./services/loggerService');
 const { max } = require('date-fns');
 const swaggerUi = require('swagger-ui-express');
 const swaggerSpec = require('./swagger');
+const airtableServices = require('./services/airtable');
 
 const htmlLogger = new Logger({
   logFile: 'logs.html',
@@ -417,6 +419,7 @@ async function scanDocuments() {
 
 // Routes
 app.use('/', setupRoutes);
+app.use('/admin/airtable', airtableRoutes);
 
 /**
  * @swagger
@@ -584,6 +587,11 @@ async function gracefulShutdown(signal) {
     console.log('[DEBUG] Closing database...');
     await documentModel.closeDatabase();
     console.log('[DEBUG] Database closed successfully');
+    
+    console.log('[DEBUG] Shutting down Airtable services...');
+    airtableServices.shutdown();
+    console.log('[DEBUG] Airtable services shutdown complete');
+    
     process.exit(0);
   } catch (error) {
     console.error(`[ERROR] during ${signal} shutdown:`, error);
@@ -595,12 +603,33 @@ async function gracefulShutdown(signal) {
 process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
 process.on('SIGINT', () => gracefulShutdown('SIGINT'));
 
+// Initialize Airtable cache service
+async function initializeAirtableCache() {
+  if (config.airtable && config.airtable.apiKey) {
+    try {
+      console.log('Initializing Airtable cache service...');
+      await airtableServices.getAirtableCacheService(config);
+      console.log('Airtable cache service initialized successfully');
+      return true;
+    } catch (error) {
+      console.error('Failed to initialize Airtable cache service:', error);
+      return false;
+    }
+  } else {
+    console.log('Airtable API key not configured, skipping cache initialization');
+    return false;
+  }
+}
+
 // Start server
 async function startServer() {
   const port = process.env.DELTA_AI_PORT || 3000;
   try {
     await initializeDataDirectory();
     await saveOpenApiSpec(); // Save OpenAPI specification on startup
+    
+    // Initialize Airtable cache service
+    await initializeAirtableCache();
     
     // Run auto setup if admin credentials are provided in .env
     if (process.env.ADMIN_USER && process.env.ADMIN_PASSWORD) {
