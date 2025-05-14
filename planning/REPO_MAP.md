@@ -4,7 +4,7 @@ This document provides a comprehensive guide to the Delta-AI application's archi
 
 ## Application Overview
 
-Delta-AI is a Node.js application that integrates with Delta-DMS, (a document management system forked from Paperless-ngx), to provide AI-enhanced document processing capabilities. This readme may refer to Delta-DMS and Paperless-ngx interchangeably. The application:
+Delta-AI is a Node.js application that integrates with Delta-DMS, (a document management system forked from Paperless-ngx), to provide AI-enhanced document processing capabilities. This readme may refer to Delta-DMS and Paperless-ngx. The application:
 
 1. Automatically scans and analyzes documents in a Delta-DMS instance
 2. Uses AI to extract metadata (tags, document types, correspondents, dates)
